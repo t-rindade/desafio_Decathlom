@@ -1,0 +1,23 @@
+name: Send Images to EFS
+
+on:
+  push:
+    branches:
+      - "main"
+      - "developer"
+    paths:
+      - 'path/to/images/**'  # This triggers workflow only on changes in the images folder
+
+jobs:
+  send-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Identify new images (use appropriate tools like 'find')
+        run: |
+          new_images=$(find path/to/images -name "*.jpg" -mtime -1)  # Modify based on your image format and logic
+      - name: Transfer new images to EFS (use AWS CLI or SDK)
+        run: |
+          aws s3 cp $new_images s3://Decathlom/path/on/efs  # Replace placeholders with your details
