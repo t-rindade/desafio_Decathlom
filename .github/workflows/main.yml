@@ -44,7 +44,7 @@ jobs:
         run: |
           for image in ${new_images[@]}
           do
-            aws s3 cp "$image" "s3://Decathlom/path/on/efs/$(basename "$image")"
+            aws s3 cp "$image" "s3://Decathlom/path/on/efs"
           done
         env:
           new_images: ${{ steps.find-images.outputs.new_images }}
