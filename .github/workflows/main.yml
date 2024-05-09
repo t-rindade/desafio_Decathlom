@@ -30,7 +30,7 @@ jobs:
         
       - name: Identify new images (use appropriate tools like 'find')
         run: |
-          new_images=$(find /images -name "*.png" -mtime -1)  # Modify based on your image format and logic
+          new_images=$(find images -name "*.png" -mtime -1)  # Modify based on your image format and logic
       
       - name: Transfer new images to EFS (use AWS CLI or SDK)
         run: |
