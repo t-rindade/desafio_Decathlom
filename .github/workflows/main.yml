@@ -6,7 +6,7 @@ on:
       - "main"
       - "developer"
     paths:
-      - 'path/to/images/**'  # This triggers workflow only on changes in the images folder
+      - 'images/**'  # This triggers workflow only on changes in the images folder
 
 jobs:
   send-images:
@@ -17,7 +17,7 @@ jobs:
         
       - name: Identify new images (use appropriate tools like 'find')
         run: |
-          new_images=$(find path/to/images -name "*.png" -mtime -1)  # Modify based on your image format and logic
+          new_images=$(find images -name "*.png" -mtime -1)  # Modify based on your image format and logic
       - name: Transfer new images to EFS (use AWS CLI or SDK)
         run: |
           aws s3 cp $new_images s3://Decathlom/path/on/efs  # Replace placeholders with your details
