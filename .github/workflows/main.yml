@@ -28,6 +28,6 @@ jobs:
         run: |
           echo "$CHAVE_PEM" > ./key.pem
           chmod 600 ./key.pem
-          scp -i ./key.pem -r ./images/* ec2-user@54.147.110.59:/efs
+          scp -i ./key.pem -r ./images/* ec2-user@54.147.110.59:/home/ec2-user/efs
         env:
           CHAVE_PEM: ${{ secrets.SSH_KEY }}
