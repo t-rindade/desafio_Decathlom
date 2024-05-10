@@ -9,36 +9,21 @@ on:
       - 'images/**'
 
 jobs:
-  send-images:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: us-east-1
+      - name: Install SSH dependencies
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
 
-      - name: Test AWS CLI
-        run: aws sts get-caller-identity
-
-      - name: Add SSH key (encrypted)
-        env:
-          PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+      - name: Install SSH Key
         run: |
-          echo "$PRIVATE_KEY" | tr -d '\r' | base64 -i .ssh/id_rsa
-          chmod 600 .ssh/id_rsa
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-      - name: Connect to EC2 and transfer images
-        uses: appleboy/scp-action@latest  # You can update the version if needed
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user  # Adjust if you use a different username on your EC2
-          port: 22
-          key: ${{ path.basename('.ssh/id_rsa') }}
-          source: "images/*.png"  # Update source paths
-          target: /efs/  # Assuming your EFS mount point is /efs
+      - name: Copy files to EC2
+        run: scp -i ~/.ssh/id_rsa -r ./images/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/efs
