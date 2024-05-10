@@ -39,6 +39,6 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user  # Adjust if you use a different username on your EC2
           port: 22
-          key: ${{ chaveppk('.ssh/id_rsa') }}
+          key: ${{ path.basename('.ssh/id_rsa') }}
           source: "images/*.png"  # Update source paths
           target: /efs/  # Assuming your EFS mount point is /efs
