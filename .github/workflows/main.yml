@@ -26,9 +26,16 @@ jobs:
       - name: Test AWS CLI
         run: aws sts get-caller-identity
 
-      - name: Identify new images (use appropriate tools like 'find')
-        run: |
-          new_images=$(find images -name "*.png" -mtime -1)
-      - name: Transfer new images to EFS (use AWS CLI or SDK)
-        run: |
-          scp -i chaveppk.ppk $new_images ec2-user@3.92.243.114:/efs
+      - name: Retrieve private key (replace with your secure storage method)
+        uses: aws/aws-actions/secretsmanager-get-secret-value@v1
+        with:
+          name: chaveppk  # Replace with your secret name
+
+      - name: Transfer images to EC2
+        uses: gobuffalo/sftp@v1  # Example action, choose a trusted one
+        with:
+          host: ${{ secrets.EC2_HOST }}  # EC2 hostname or IP
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.MY_PRIVATE_KEY }}  # Replace with retrieved key secret
+          remote: /efs  # Target folder on EC2
+          local: $new_images
