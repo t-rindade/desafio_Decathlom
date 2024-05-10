@@ -26,4 +26,4 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Copy files to EC2
-        run: scp -i ~/.ssh/id_rsa -r ./images/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/efs
+        run: scp -i ~/.ssh/id_rsa -r ./images/* ec2-user@54.147.110.59:/efs
