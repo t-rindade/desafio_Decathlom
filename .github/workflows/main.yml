@@ -26,25 +26,9 @@ jobs:
       - name: Test AWS CLI
         run: aws sts get-caller-identity
 
-      - name: Identify new images
-        id: find-images
+      - name: Identify new images (use appropriate tools like 'find')
         run: |
-          new_images=$(find images -type f -name "*.png" -mtime -1 -print)
-          if [ -z "$new_images" ]; then
-            echo "No new images found."
-            echo "::set-output name=has_new_images::false"
-          else
-            echo "New images: $new_images"
-            echo "::set-output name=has_new_images::true"
-            echo "::set-output name=new_images::$new_images"
-          fi
-
-      - name: Transfer new images to S3
-        if: steps.find-images.outputs.has_new_images == 'true'
+          new_images=$(find images -name "*.png" -mtime -1)  # Modify based on your image format and logic
+      - name: Transfer new images to EFS (use AWS CLI or SDK)
         run: |
-          for image in ${new_images[@]}
-          do
-            aws s3 cp "$image" "s3://Decathlom/path/on/efs"
-          done
-        env:
-          new_images: ${{ steps.find-images.outputs.new_images }}
+          scp -i chaveppk.ppk> $new_images ec2-user@:/efs  # Replace placeholders
