@@ -31,4 +31,4 @@ jobs:
           new_images=$(find images -name "*.png" -mtime -1)  # Modify based on your image format and logic
       - name: Transfer new images to EFS (use AWS CLI or SDK)
         run: |
-          scp -i chaveppk.ppk> $new_images ec2-user@:/efs  # Replace placeholders
+          scp -i chaveppk.ppk> $new_images ec2-user@3.92.243.114:/efs  # Replace placeholders
