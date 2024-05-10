@@ -20,10 +20,13 @@ jobs:
 
       - name: Install SSH Key
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ''
+          ssh-keyscan -H 54.147.110.59 >> ~/.ssh/known_hosts
 
       - name: Copy files to EC2
-        run: scp -i ~/.ssh/id_rsa -r ./images/* ec2-user@54.147.110.59:/efs
+        run: |
+          echo "$CHAVE_PEM" > ./key.pem
+          chmod 600 ./key.pem
+          scp -i ./key.pem -r ./images/* ec2-user@54.147.110.59:/efs
+        env:
+          CHAVE_PEM: ${{ secrets.SSH_KEY }}
